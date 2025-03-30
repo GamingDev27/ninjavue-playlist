@@ -21,6 +21,11 @@ const router = createRouter({
       name: 'signup',
       component: SignUpView,
     },
+    {
+      path: '/playlist/create',
+      name: 'create-playlist',
+      component: () => import('../views/playlist/CreatePlaylist.vue'),
+    },
   ],
 })
 
