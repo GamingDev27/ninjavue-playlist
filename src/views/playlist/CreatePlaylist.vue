@@ -12,12 +12,14 @@
 
 <script setup>
 import { ref } from 'vue'
+import useStorage from '@/composables/useStorage'
 
 const title = ref('')
 const description = ref('')
 const file = ref(null)
 const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg']
 const fileError = ref(null)
+const { url, filePath, uploadImage } = useStorage()
 
 const handleFileUpload = (event) => {
   const selectedFile = event.target.files[0]
@@ -33,14 +35,13 @@ const handleFileUpload = (event) => {
   }
 }
 
-const handleCreatePlaylist = () => {
-  console.log('Creating playlist with the following data:')
+const handleCreatePlaylist = async () => {
   if (!file.value) {
     fileError.value = 'Please select a valid file'
     return
   }
-
-  
+  await uploadImage(file.value, filePath.value)
+  console.log('File uploaded successfully, url:', url.value)
 }
 </script>
 
