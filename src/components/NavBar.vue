@@ -2,9 +2,10 @@
   <div class="navbar">
     <nav>
       <img src="@/assets/ninja.png" alt="" />
-      <h1><route-link :to="{ name: 'home' }">Ninja Playlist</route-link></h1>
+      <router-link :to="{ name: 'home' }"><h1>Ninja Playlist</h1></router-link>
       <div class="links">
         <div v-if="user">
+            <router-link :to="{ name: 'create-playlist' }">Create Playlist</router-link>
             <button v-if="!isPending" @click="handleLogout">Logout</button>
             <button v-else disabled>Loading...</button>
         </div>

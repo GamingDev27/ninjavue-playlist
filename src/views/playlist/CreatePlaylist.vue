@@ -6,21 +6,29 @@
     <label for="upload-file">Upload Playlist Cover Image</label>
     <input type="file" src="" alt="" accept="image/*" @change="handleFileUpload" />
     <div class="error" v-if="fileError">{{ fileError }}</div>
-    <button>Create</button>
+    <button :class="{ disabled: isPending }" :disabled="isPending">
+      {{ isPending ? 'Saving...' : 'Create' }}
+    </button>
   </form>
 </template>
 
 <script setup>
 import { ref } from 'vue'
 import useStorage from '@/composables/useStorage'
+import getUser from '@/composables/getUser'
+import useCollection from '@/composables/useCollection'
+import { timestamp } from '@/firebase/config'
 
 const title = ref('')
 const description = ref('')
 const file = ref(null)
-const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg']
+const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/webp']
 const fileError = ref(null)
-const { url, filePath, uploadImage } = useStorage()
 
+const { url, filePath, uploadImage } = useStorage()
+const { user } = getUser()
+const { addDocument, error } = useCollection('playlists')
+const isPending = ref(false)
 const handleFileUpload = (event) => {
   const selectedFile = event.target.files[0]
   fileError.value = null
@@ -36,12 +44,38 @@ const handleFileUpload = (event) => {
 }
 
 const handleCreatePlaylist = async () => {
+  isPending.value = true
   if (!file.value) {
     fileError.value = 'Please select a valid file'
     return
   }
+
   await uploadImage(file.value, filePath.value)
-  console.log('File uploaded successfully, url:', url.value)
+  await addDocument({
+    title: title.value,
+    description: description.value,
+    userId: user.value.uid,
+    coverImage: url.value,
+    filePath: filePath.value,
+    songs: [],
+    createdBy: user.value.displayName,
+    createdAt: timestamp(),
+  })
+
+  isPending.value = false
+  if (error.value) {
+    console.log(error.value)
+    console.log('Failed to insert record')
+  }
+  console.log('File uploaded successfully')
+  resetFields()
+}
+
+const resetFields = () => {
+  title.value = ''
+  description.value = ''
+  file.value = null
+  fileError.value = null
 }
 </script>
 
@@ -57,5 +91,10 @@ label {
 }
 button {
   margin-top: 20px;
+}
+
+.disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
 }
 </style>
