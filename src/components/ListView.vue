@@ -2,19 +2,20 @@
 <template>
     <div v-if="playlists">
         <div v-for="playlist in playlists" :key="playlist.id">
-        <div class="single">
-            <div class="thumbnail">
-                <img :src="playlist.coverImage" alt="" />  
-            </div>
-            <div class="info">
-                <h3>{{ playlist.title }}</h3>
-                <p>Created by {{ playlist.createdBy }}</p>
-            </div>
-            <div class="song-number">
-                <p>{{ playlist.songs.length }} songs</p>
-            </div>
-
-        </div>
+            <router-link :to="{ name: 'playlist-details', params: { id: playlist.id } }" >
+                <div class="single">
+                    <div class="thumbnail">
+                        <img :src="playlist.coverImage" alt="" />
+                    </div>
+                    <div class="info">
+                        <h3>{{ playlist.title }}</h3>
+                        <p>Created by {{ playlist.createdBy }}</p>
+                    </div>
+                    <div class="song-number">
+                        <p>{{ playlist.songs.length }} songs</p>
+                    </div>
+                </div>
+            </router-link>
         </div>
     </div>  
 </template>
