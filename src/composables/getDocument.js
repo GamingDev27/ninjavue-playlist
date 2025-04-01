@@ -2,11 +2,11 @@ import { ref, watchEffect } from 'vue'
 import { doc, onSnapshot } from 'firebase/firestore'
 import { projectFirestore } from '../firebase/config'
 
-const getDocument =  (collectionName, id) => {
+const getDocument = (collectionName, id) => {
   const document = ref(null)
   const error = ref(null)
 
-  const documentRef = doc(projectFirestore, collectionName, id)
+  let documentRef = doc(projectFirestore, collectionName, id)
   
   const unsub = onSnapshot(
     documentRef,
@@ -16,10 +16,10 @@ const getDocument =  (collectionName, id) => {
         error.value = null
       } else {
         error.value = 'Document does not exist'
-      }
+      }                                             
     },
     (err) => {
-      console.log(err.message)
+      console.log(err.message)  
       document.value = null
       error.value = 'Could not fetch the data'
     },
