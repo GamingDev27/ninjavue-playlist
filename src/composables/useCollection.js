@@ -10,9 +10,9 @@ const useCollection = (collectionName) => {
     isPending.value = true
     try {
       const colRef = collection(projectFirestore, collectionName)
-      await addDoc(colRef, doc)
+      const docRef = await addDoc(colRef, doc)
       isPending.value = false
-      return colRef
+      return docRef
     } catch (err) {
       console.log(err.message)
       isPending.value = false

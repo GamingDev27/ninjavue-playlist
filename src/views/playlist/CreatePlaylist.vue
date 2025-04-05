@@ -73,6 +73,7 @@ const handleCreatePlaylist = async () => {
   }
   console.log('File uploaded successfully')
   resetFields()
+  console.table(res.id)
   router.push({name: 'playlist-details', params:{id: res.id}})
 }
 

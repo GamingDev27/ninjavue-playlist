@@ -10,21 +10,27 @@
       <h2>{{ playlist.title }}</h2>
       <p class="username">Created By: {{ playlist.createdBy }}</p>
       <p class="description">{{ playlist.description }}</p>
-      <button v-if="isOwned" :disabled="isPending" @click="handleDelete">{{ isPending ? 'Deleting...' : 'Delete Playlist' }}</button>
+      <button v-if="isOwned" :disabled="isPending" @click="handleDelete">
+        {{ isPending ? 'Deleting...' : 'Delete Playlist' }}
+      </button>
     </div>
 
     <!-- songlist -->
     <div class="song-list">
       <p>song list hear</p>
+      <AddSong />
     </div>
   </div>
 </template>
 
 <script setup>
+import AddSong from '@/components/AddSong.vue'
+import useStorage from '@/composables/useStorage'
 import useDocument from '@/composables/useDocument'
 import getDocument from '@/composables/getDocument'
 import getUser from '@/composables/getUser'
 import { computed } from 'vue'
+import { useRouter } from 'vue-router'
 
 const { user } = getUser()
 const props = defineProps({
@@ -34,19 +40,21 @@ const props = defineProps({
   },
 })
 
-
-const {document: playlist, error} = getDocument('playlists', props.id)
-
-const {deleteDocument, error: delError, isPending } = useDocument('playlists', props.id)
+const router = useRouter()
+const { document: playlist, error } = getDocument('playlists', props.id)
+const { deleteDocument, error: delError, isPending } = useDocument('playlists', props.id)
+const { deleteImg } = useStorage()
 
 const isOwned = computed(() => {
   return playlist.value && user.value && user.value.uid == playlist.value.userId ? true : false
 })
 
 const handleDelete = async () => {
-    await deleteDocument('playlist',playlist.value.id)
-}
+  await deleteImg(playlist.value.filePath)
+  await deleteDocument('playlist', playlist.value.id)
 
+  router.push({ name: 'home' })
+}
 </script>
 
 <style>
