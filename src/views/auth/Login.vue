@@ -23,7 +23,7 @@ const handleSubmit = async () => {
   const res = await login(email.value, password.value);
   if(!error.value){
     console.log('Login successful')
-    router.push({ name: 'home' })
+    router.push({ name: 'playlist-user' })
   }
 }
 </script>

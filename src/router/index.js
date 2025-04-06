@@ -2,9 +2,8 @@ import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import LoginView from '../views/auth/Login.vue'
 import SignUpView from '../views/auth/Signup.vue'
-import {onAuthStateChanged } from 'firebase/auth'
+import { onAuthStateChanged } from 'firebase/auth'
 import { projectAuth } from '@/firebase/config'
-
 
 const requireAuth = (to, from, next) => {
   onAuthStateChanged(projectAuth, (user) => {
@@ -46,7 +45,13 @@ const router = createRouter({
       name: 'playlist-details',
       component: () => import('../views/playlist/PlaylistDetailsView.vue'),
       beforeEnter: requireAuth,
-      props:true
+      props: true,
+    },
+    {
+      path: '/playlist/user',
+      name: 'playlist-user',
+      component: () => import('../views/playlist/UserPlaylist.vue'),
+      beforeEnter: requireAuth,
     },
   ],
 })
