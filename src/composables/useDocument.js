@@ -1,5 +1,5 @@
 import { ref } from 'vue'
-import { doc, deleteDoc } from 'firebase/firestore'
+import { doc, deleteDoc, updateDoc } from 'firebase/firestore'
 import { projectFirestore } from '../firebase/config'
 
 const useDocument = (collectionName, id) => {
@@ -25,7 +25,24 @@ const useDocument = (collectionName, id) => {
 
   }
 
-  return { isPending, error, deleteDocument }
+  const updateDocument = async (params) => {
+    isPending.value = true
+    error.value = null;
+
+    try {
+        const res = await updateDoc(documentRef,params)
+        isPending.value = false
+        return res
+    } 
+    catch(err){
+        console.log(err)
+        isPending.value = false
+        error.value = 'Could not update document'
+    }
+
+  }
+
+  return { isPending, error, deleteDocument, updateDocument }
 }
 
 export default useDocument

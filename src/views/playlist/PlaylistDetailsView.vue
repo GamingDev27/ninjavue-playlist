@@ -18,7 +18,7 @@
     <!-- songlist -->
     <div class="song-list">
       <p>song list hear</p>
-      <AddSong />
+      <AddSong v-if="isOwned" :playlist="playlist" />
     </div>
   </div>
 </template>
