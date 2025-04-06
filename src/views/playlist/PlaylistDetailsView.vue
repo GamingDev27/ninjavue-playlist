@@ -17,7 +17,18 @@
 
     <!-- songlist -->
     <div class="song-list">
-      <p>song list hear</p>
+      <div v-if="!playlist.songs.length">No songs have been added to this playlist yet</div>
+
+      <div v-for="song in playlist.songs" :key="song.id" class="single-song">
+        <div class="details">
+          <div class="song-details">
+            <h3>{{ song.title }}</h3>
+            <p>{{ song.artist }}</p>
+          </div>
+          <button v-if="isOwned" @click="handleSongDelete(song.id)">X</button>
+        </div>
+      </div>
+
       <AddSong v-if="isOwned" :playlist="playlist" />
     </div>
   </div>
@@ -42,7 +53,7 @@ const props = defineProps({
 
 const router = useRouter()
 const { document: playlist, error } = getDocument('playlists', props.id)
-const { deleteDocument, error: delError, isPending } = useDocument('playlists', props.id)
+const { deleteDocument, error: delError, isPending, updateDocument } = useDocument('playlists', props.id)
 const { deleteImg } = useStorage()
 
 const isOwned = computed(() => {
@@ -54,6 +65,14 @@ const handleDelete = async () => {
   await deleteDocument('playlist', playlist.value.id)
 
   router.push({ name: 'home' })
+}
+
+const handleSongDelete = async(songId) => {
+  
+  const updatedSongs = playlist.value.songs.filter(song => song.id != songId)
+  await updateDocument({
+    songs: updatedSongs,
+  }) 
 }
 </script>
 
@@ -95,5 +114,17 @@ const handleDelete = async () => {
 }
 .description {
   text-align: left;
+}
+
+.single-song {
+  align-items: center;
+  border-bottom: 1px dashed var(--secondary);
+  margin-bottom: 20px;
+}
+
+.details {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 </style>
